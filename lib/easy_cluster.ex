@@ -16,10 +16,12 @@ defmodule EasyCluster do
   # def node_info(node \\ nil), do: EasyCluster.NodeInfo.new!(node)
 
   @doc "The callback on another node in the cluster coming alive"
-  @callback handle_node_up(node :: EasyCluster.NodeInfo.t()) :: :ok
+  @callback handle_node_up(source :: EasyCluster.NodeInfo.t(), node :: EasyCluster.NodeInfo.t()) ::
+              :ok
 
   @doc "The callback on another node in the cluster coming dead"
-  @callback handle_node_down(node :: EasyCluster.NodeInfo.t()) :: :ok
+  @callback handle_node_down(source :: EasyCluster.NodeInfo.t(), node :: EasyCluster.NodeInfo.t()) ::
+              :ok
 
   defstruct config: nil, self: nil, group: nil, siblings: %{}
 
@@ -41,20 +43,20 @@ defmodule EasyCluster do
 
       @behaviour EasyCluster
 
-      @node_up_handler Keyword.get(unquote(opts), :node_up_handler, &EasyCluster.handle_node_up/1)
+      @node_up_handler Keyword.get(unquote(opts), :node_up_handler, &EasyCluster.handle_node_up/2)
       @node_down_handler Keyword.get(
                            unquote(opts),
                            :node_down_handler,
-                           &EasyCluster.handle_node_down/1
+                           &EasyCluster.handle_node_down/2
                          )
 
       @impl EasyCluster
-      def handle_node_up(%EasyCluster.NodeInfo{} = node),
-        do: @node_up_handler.(node.fq_name)
+      def handle_node_up(%EasyCluster.NodeInfo{} = source, %EasyCluster.NodeInfo{} = node),
+        do: @node_up_handler.(source, node)
 
       @impl EasyCluster
-      def handle_node_down(%EasyCluster.NodeInfo{} = node),
-        do: @node_down_handler.(node.fq_name)
+      def handle_node_down(%EasyCluster.NodeInfo{} = source, %EasyCluster.NodeInfo{} = node),
+        do: @node_down_handler.(source, node)
 
       ##########################################################################
 
@@ -95,9 +97,10 @@ defmodule EasyCluster do
               reduce: siblings do
             acc ->
               node =
-                host
+                [state.self.otp_app, group, node_num]
+                |> Enum.join("_")
                 |> Kernel.<>("@")
-                |> Kernel.<>(Enum.join([state.self.otp_app, group, node_num], "_"))
+                |> Kernel.<>(host)
                 |> String.to_atom()
 
               if Node.ping(node) == :pong do
@@ -105,7 +108,7 @@ defmodule EasyCluster do
                 |> Map.get_and_update(node, fn
                   nil ->
                     node_info = EasyCluster.NodeInfo.new!(node)
-                    handle_node_up(node_info)
+                    handle_node_up(state.self, node_info)
                     {nil, node_info}
 
                   value ->
@@ -118,7 +121,7 @@ defmodule EasyCluster do
           end
 
         for {node, info} <- siblings, is_nil(updated_siblings[node]) do
-          handle_node_down(info)
+          handle_node_down(state.self, info)
         end
 
         Process.send_after(self(), :discover, Keyword.get(config, :timeout, @timeout))
@@ -127,9 +130,9 @@ defmodule EasyCluster do
     end
   end
 
-  def handle_node_up(%EasyCluster.NodeInfo{} = node),
-    do: Logger.info("[🕸️] Node is up: " <> node.fq_name)
+  def handle_node_up(%EasyCluster.NodeInfo{fq_name: source}, %EasyCluster.NodeInfo{full: node}),
+    do: Logger.info("[#{source}@ 🕸️] Node is up: " <> node)
 
-  def handle_node_down(%EasyCluster.NodeInfo{} = node),
-    do: Logger.info("[🕸️] Node is down: " <> node.fq_name)
+  def handle_node_down(%EasyCluster.NodeInfo{fq_name: source}, %EasyCluster.NodeInfo{full: node}),
+    do: Logger.info("[#{source}@ 🕸️] Node is down: " <> node)
 end

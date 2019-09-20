@@ -3,16 +3,18 @@ defmodule EasyCluster.Default do
   Default implementation of the `EasyCluster`. Logs nodes appearance.
   """
   use EasyCluster,
-    node_up_handler: &EasyCluster.Default.handle_node_up/1,
-    node_down_handler: &EasyCluster.Default.handle_node_down/1
+    node_up_handler: &EasyCluster.Default.Handlers.handle_node_up/2,
+    node_down_handler: &EasyCluster.Default.Handlers.handle_node_down/2
 
-  require Logger
+  defmodule Handlers do
+    require Logger
 
-  @doc false
-  def handle_node_up(%EasyCluster.NodeInfo{} = node),
-    do: Logger.info("[🕸️] Node is up: " <> node.fq_name)
+    @doc false
+    def handle_node_up(%EasyCluster.NodeInfo{fq_name: source}, %EasyCluster.NodeInfo{full: node}),
+      do: Logger.info("[#{source}@ 🕸️] Node is up: " <> node)
 
-  @doc false
-  def handle_node_down(%EasyCluster.NodeInfo{} = node),
-    do: Logger.info("[🕸️] Node is down: " <> node.fq_name)
+    @doc false
+    def handle_node_down(%EasyCluster.NodeInfo{fq_name: source}, %EasyCluster.NodeInfo{full: node}),
+        do: Logger.info("[#{source}@ 🕸️] Node is down: " <> node)
+  end
 end
