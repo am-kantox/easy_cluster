@@ -2,7 +2,7 @@ defmodule EasyCluster.MixProject do
   use Mix.Project
 
   @app :easy_cluster
-  @version "0.1.0"
+  @version "0.1.1"
 
   def project do
     [
@@ -36,7 +36,7 @@ defmodule EasyCluster.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:test_cluster_task, "~> 0.3", only: [:dev, :test, :ci]},
+      {:test_cluster_task, "~> 0.4", only: [:dev, :test, :ci]},
       {:credo, "~> 1.0", only: [:dev, :ci]},
       {:dialyxir, "~> 1.0.0-rc.6", only: [:dev, :test, :ci], runtime: false},
       {:ex_doc, "~> 0.11", only: :dev}

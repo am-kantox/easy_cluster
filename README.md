@@ -1,21 +1,26 @@
 # EasyCluster
 
-**TODO: Add description**
+**Semi-automatic node discovery based on configuration**
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `easy_cluster` to your list of dependencies in `mix.exs`:
+Add `easy_cluster` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
   [
-    {:easy_cluster, "~> 0.1.0"}
+    {:easy_cluster, "~> 0.1"}
   ]
 end
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/easy_cluster](https://hexdocs.pm/easy_cluster).
+## Usage
+
+Try
+
+```elixir
+$ iex -S mix run.cluster
+```
+
+## [Documentation](https://hexdocs.pm/easy_cluster).
 

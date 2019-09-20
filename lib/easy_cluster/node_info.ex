@@ -53,7 +53,7 @@ defmodule EasyCluster.NodeInfo do
 
   @spec parse_fq_name(fq_name :: binary()) :: keyword()
   defp parse_fq_name(fq_name) do
-    case String.split(fq_name, "_") do
+    case String.split(fq_name, "-") do
       [otp_app] -> [otp_app: otp_app]
       [otp_app, local_id] -> [otp_app: otp_app, local_id: local_id]
       [otp_app, group, local_id] -> [otp_app: otp_app, group: group, local_id: local_id]

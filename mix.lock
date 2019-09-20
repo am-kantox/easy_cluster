@@ -9,5 +9,5 @@
   "makeup": {:hex, :makeup, "1.0.0", "671df94cf5a594b739ce03b0d0316aa64312cee2574b6a44becb83cd90fb05dc", [:mix], [{:nimble_parsec, "~> 0.5.0", [hex: :nimble_parsec, repo: "hexpm", optional: false]}], "hexpm"},
   "makeup_elixir": {:hex, :makeup_elixir, "0.14.0", "cf8b7c66ad1cff4c14679698d532f0b5d45a3968ffbcbfd590339cb57742f1ae", [:mix], [{:makeup, "~> 1.0", [hex: :makeup, repo: "hexpm", optional: false]}], "hexpm"},
   "nimble_parsec": {:hex, :nimble_parsec, "0.5.1", "c90796ecee0289dbb5ad16d3ad06f957b0cd1199769641c961cfe0b97db190e0", [:mix], [], "hexpm"},
-  "test_cluster_task": {:hex, :test_cluster_task, "0.3.1", "022d4bef407244fd8ed061c9a98959d312a24a132f217fae20cc8f7237b36d3d", [:mix], [], "hexpm"},
+  "test_cluster_task": {:hex, :test_cluster_task, "0.4.0", "0c493098fb72665d32541d0501f8a8452fc8c46dae7d780436ad3ff1c44ae004", [:mix], [], "hexpm"},
 }

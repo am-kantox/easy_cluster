@@ -98,7 +98,7 @@ defmodule EasyCluster do
             acc ->
               node =
                 [state.self.otp_app, group, node_num]
-                |> Enum.join("_")
+                |> Enum.join("-")
                 |> Kernel.<>("@")
                 |> Kernel.<>(host)
                 |> String.to_atom()
