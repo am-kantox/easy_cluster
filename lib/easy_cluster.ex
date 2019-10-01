@@ -62,16 +62,21 @@ defmodule EasyCluster do
 
       use GenServer
 
-      def start_link(config),
-        do: GenServer.start_link(__MODULE__, config, name: __MODULE__)
+      def start_link(configs),
+        do: GenServer.start_link(__MODULE__, configs, name: __MODULE__)
 
       def state, do: GenServer.call(__MODULE__, :state)
 
       @impl GenServer
-      def init(config),
-        do:
-          {:ok, struct(EasyCluster, config: config, self: EasyCluster.NodeInfo.new!()),
-           {:continue, :discover}}
+      def init(configs) do
+        config =
+          Enum.reduce(configs, [], fn {app, key}, acc ->
+            Keyword.merge(acc, Application.get_env(app, key, []), fn _k, v1, v2 -> v1 ++ v2 end)
+          end)
+
+        {:ok, struct(EasyCluster, config: config, self: EasyCluster.NodeInfo.new!()),
+         {:continue, :discover}}
+      end
 
       @impl GenServer
       def handle_continue(:discover, %EasyCluster{} = state),
